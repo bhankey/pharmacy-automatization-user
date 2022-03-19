@@ -4,7 +4,7 @@ import (
 	"github.com/bhankey/pharmacy-automatization-user/internal/adapter/repository/emailrepo"
 	"github.com/bhankey/pharmacy-automatization-user/internal/adapter/repository/onetimecodesrepo"
 	"github.com/bhankey/pharmacy-automatization-user/internal/adapter/repository/userrepo"
-	"github.com/bhankey/pharmacy-automatization-user/internal/delivery/grpc/user"
+	"github.com/bhankey/pharmacy-automatization-user/internal/delivery/grpc/v1/user"
 	"github.com/bhankey/pharmacy-automatization-user/internal/service/userservice"
 	"time"
 )

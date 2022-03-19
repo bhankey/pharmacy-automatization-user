@@ -33,6 +33,12 @@ message Email {
   string email = 1  [(validate.rules).string.email = true];
 }
 
+message EmailAndPassword {
+  string email = 1  [(validate.rules).string.email = true];
+  string password = 2  [(validate.rules).string.min_len = 8];
+}
+
+
 message GetUserByIDRequest {
   int64 id = 1 [(validate.rules).int64.gt = 0];
 }
@@ -52,10 +58,9 @@ message Users {
   repeated User users = 1;
 }
 
-message UpdateUserRequest {
-
+message IsCorrect {
+  bool is_correct = 1;
 }
-
 service UserService {
   rpc GetByEmail(Email) returns (User);
   rpc GetByID(GetUserByIDRequest) returns (User);
@@ -64,4 +69,5 @@ service UserService {
   rpc ChangePassword(ChangePasswordRequest) returns (google.protobuf.Empty);
   rpc GetUsers(PaginationRequest) returns (Users);
   rpc UpdateUser(User) returns (google.protobuf.Empty);
+  rpc IsPasswordCorrect(EmailAndPassword) returns (IsCorrect);
 }

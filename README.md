@@ -9,3 +9,8 @@ This project is made for university work. This microservice for working with use
 - configs - config for start up project
 - .build - Docker
 - api - any kind of API or description of project
+
+Tasks:
+- [ ] Think about client error handling 
+- [x] Check :)
+

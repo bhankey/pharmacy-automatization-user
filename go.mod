@@ -5,7 +5,6 @@ go 1.18
 require (
 	github.com/envoyproxy/protoc-gen-validate v0.6.7
 	github.com/go-redis/redis/v8 v8.11.0
-	github.com/golang-jwt/jwt/v4 v4.3.0
 	github.com/ilyakaznacheev/cleanenv v1.2.5
 	github.com/jackc/pgx/v4 v4.12.0
 	github.com/jmoiron/sqlx v1.3.4

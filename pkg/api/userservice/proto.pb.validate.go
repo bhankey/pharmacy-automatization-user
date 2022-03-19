@@ -568,6 +568,178 @@ var _ interface {
 	ErrorName() string
 } = EmailValidationError{}
 
+// Validate checks the field values on EmailAndPassword with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *EmailAndPassword) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on EmailAndPassword with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// EmailAndPasswordMultiError, or nil if none found.
+func (m *EmailAndPassword) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *EmailAndPassword) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if err := m._validateEmail(m.GetEmail()); err != nil {
+		err = EmailAndPasswordValidationError{
+			field:  "Email",
+			reason: "value must be a valid email address",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetPassword()) < 8 {
+		err := EmailAndPasswordValidationError{
+			field:  "Password",
+			reason: "value length must be at least 8 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return EmailAndPasswordMultiError(errors)
+	}
+	return nil
+}
+
+func (m *EmailAndPassword) _validateHostname(host string) error {
+	s := strings.ToLower(strings.TrimSuffix(host, "."))
+
+	if len(host) > 253 {
+		return errors.New("hostname cannot exceed 253 characters")
+	}
+
+	for _, part := range strings.Split(s, ".") {
+		if l := len(part); l == 0 || l > 63 {
+			return errors.New("hostname part must be non-empty and cannot exceed 63 characters")
+		}
+
+		if part[0] == '-' {
+			return errors.New("hostname parts cannot begin with hyphens")
+		}
+
+		if part[len(part)-1] == '-' {
+			return errors.New("hostname parts cannot end with hyphens")
+		}
+
+		for _, r := range part {
+			if (r < 'a' || r > 'z') && (r < '0' || r > '9') && r != '-' {
+				return fmt.Errorf("hostname parts can only contain alphanumeric characters or hyphens, got %q", string(r))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *EmailAndPassword) _validateEmail(addr string) error {
+	a, err := mail.ParseAddress(addr)
+	if err != nil {
+		return err
+	}
+	addr = a.Address
+
+	if len(addr) > 254 {
+		return errors.New("email addresses cannot exceed 254 characters")
+	}
+
+	parts := strings.SplitN(addr, "@", 2)
+
+	if len(parts[0]) > 64 {
+		return errors.New("email address local phrase cannot exceed 64 characters")
+	}
+
+	return m._validateHostname(parts[1])
+}
+
+// EmailAndPasswordMultiError is an error wrapping multiple validation errors
+// returned by EmailAndPassword.ValidateAll() if the designated constraints
+// aren't met.
+type EmailAndPasswordMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m EmailAndPasswordMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m EmailAndPasswordMultiError) AllErrors() []error { return m }
+
+// EmailAndPasswordValidationError is the validation error returned by
+// EmailAndPassword.Validate if the designated constraints aren't met.
+type EmailAndPasswordValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e EmailAndPasswordValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e EmailAndPasswordValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e EmailAndPasswordValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e EmailAndPasswordValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e EmailAndPasswordValidationError) ErrorName() string { return "EmailAndPasswordValidationError" }
+
+// Error satisfies the builtin error interface
+func (e EmailAndPasswordValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sEmailAndPassword.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = EmailAndPasswordValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = EmailAndPasswordValidationError{}
+
 // Validate checks the field values on GetUserByIDRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -1110,41 +1282,42 @@ var _ interface {
 	ErrorName() string
 } = UsersValidationError{}
 
-// Validate checks the field values on UpdateUserRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *UpdateUserRequest) Validate() error {
+// Validate checks the field values on IsCorrect with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *IsCorrect) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UpdateUserRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UpdateUserRequestMultiError, or nil if none found.
-func (m *UpdateUserRequest) ValidateAll() error {
+// ValidateAll checks the field values on IsCorrect with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in IsCorrectMultiError, or nil
+// if none found.
+func (m *IsCorrect) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UpdateUserRequest) validate(all bool) error {
+func (m *IsCorrect) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	// no validation rules for IsCorrect
+
 	if len(errors) > 0 {
-		return UpdateUserRequestMultiError(errors)
+		return IsCorrectMultiError(errors)
 	}
 	return nil
 }
 
-// UpdateUserRequestMultiError is an error wrapping multiple validation errors
-// returned by UpdateUserRequest.ValidateAll() if the designated constraints
-// aren't met.
-type UpdateUserRequestMultiError []error
+// IsCorrectMultiError is an error wrapping multiple validation errors returned
+// by IsCorrect.ValidateAll() if the designated constraints aren't met.
+type IsCorrectMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UpdateUserRequestMultiError) Error() string {
+func (m IsCorrectMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1153,11 +1326,11 @@ func (m UpdateUserRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UpdateUserRequestMultiError) AllErrors() []error { return m }
+func (m IsCorrectMultiError) AllErrors() []error { return m }
 
-// UpdateUserRequestValidationError is the validation error returned by
-// UpdateUserRequest.Validate if the designated constraints aren't met.
-type UpdateUserRequestValidationError struct {
+// IsCorrectValidationError is the validation error returned by
+// IsCorrect.Validate if the designated constraints aren't met.
+type IsCorrectValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1165,24 +1338,22 @@ type UpdateUserRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e UpdateUserRequestValidationError) Field() string { return e.field }
+func (e IsCorrectValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UpdateUserRequestValidationError) Reason() string { return e.reason }
+func (e IsCorrectValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UpdateUserRequestValidationError) Cause() error { return e.cause }
+func (e IsCorrectValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UpdateUserRequestValidationError) Key() bool { return e.key }
+func (e IsCorrectValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UpdateUserRequestValidationError) ErrorName() string {
-	return "UpdateUserRequestValidationError"
-}
+func (e IsCorrectValidationError) ErrorName() string { return "IsCorrectValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UpdateUserRequestValidationError) Error() string {
+func (e IsCorrectValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1194,14 +1365,14 @@ func (e UpdateUserRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUpdateUserRequest.%s: %s%s",
+		"invalid %sIsCorrect.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UpdateUserRequestValidationError{}
+var _ error = IsCorrectValidationError{}
 
 var _ interface {
 	Field() string
@@ -1209,4 +1380,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UpdateUserRequestValidationError{}
+} = IsCorrectValidationError{}

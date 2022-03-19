@@ -138,3 +138,18 @@ func (h *GRPCHandler) UpdateUser(ctx context.Context, req *userservice.User) (*e
 
 	return &emptypb.Empty{}, nil
 }
+
+func (h *GRPCHandler) IsPasswordCorrect(ctx context.Context, req *userservice.EmailAndPassword) (*userservice.IsCorrect, error) {
+	if err := req.ValidateAll(); err != nil {
+		return nil, err
+	}
+
+	isCorrect, err := h.userSrv.IsPasswordCorrect(ctx, req.GetEmail(), req.GetPassword())
+	if err != nil {
+		return nil, err
+	}
+
+	return &userservice.IsCorrect{
+		IsCorrect: isCorrect,
+	}, nil
+}

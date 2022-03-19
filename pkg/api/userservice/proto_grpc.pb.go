@@ -30,6 +30,7 @@ type UserServiceClient interface {
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetUsers(ctx context.Context, in *PaginationRequest, opts ...grpc.CallOption) (*Users, error)
 	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	IsPasswordCorrect(ctx context.Context, in *EmailAndPassword, opts ...grpc.CallOption) (*IsCorrect, error)
 }
 
 type userServiceClient struct {
@@ -103,6 +104,15 @@ func (c *userServiceClient) UpdateUser(ctx context.Context, in *User, opts ...gr
 	return out, nil
 }
 
+func (c *userServiceClient) IsPasswordCorrect(ctx context.Context, in *EmailAndPassword, opts ...grpc.CallOption) (*IsCorrect, error) {
+	out := new(IsCorrect)
+	err := c.cc.Invoke(ctx, "/userService.UserService/IsPasswordCorrect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -114,6 +124,7 @@ type UserServiceServer interface {
 	ChangePassword(context.Context, *ChangePasswordRequest) (*emptypb.Empty, error)
 	GetUsers(context.Context, *PaginationRequest) (*Users, error)
 	UpdateUser(context.Context, *User) (*emptypb.Empty, error)
+	IsPasswordCorrect(context.Context, *EmailAndPassword) (*IsCorrect, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -141,6 +152,9 @@ func (UnimplementedUserServiceServer) GetUsers(context.Context, *PaginationReque
 }
 func (UnimplementedUserServiceServer) UpdateUser(context.Context, *User) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+}
+func (UnimplementedUserServiceServer) IsPasswordCorrect(context.Context, *EmailAndPassword) (*IsCorrect, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsPasswordCorrect not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -281,6 +295,24 @@ func _UserService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_IsPasswordCorrect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmailAndPassword)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).IsPasswordCorrect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/userService.UserService/IsPasswordCorrect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).IsPasswordCorrect(ctx, req.(*EmailAndPassword))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -315,6 +347,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUser",
 			Handler:    _UserService_UpdateUser_Handler,
+		},
+		{
+			MethodName: "IsPasswordCorrect",
+			Handler:    _UserService_IsPasswordCorrect_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

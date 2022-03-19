@@ -20,6 +20,7 @@ type UserSrv interface {
 	ResetPassword(ctx context.Context, email, code, newPassword string) error
 	RequestToResetPassword(ctx context.Context, email string) error
 	Registry(ctx context.Context, user entities.User) error
+	IsPasswordCorrect(ctx context.Context, email, password string) (bool, error)
 }
 
 func NewUserGRPCHandler(userSrv UserSrv) *GRPCHandler {
