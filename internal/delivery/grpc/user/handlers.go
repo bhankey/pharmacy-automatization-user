@@ -2,8 +2,8 @@ package user
 
 import (
 	"context"
-	"github.com/bhankey/pharmacy-automatization/internal/entities"
-	"github.com/bhankey/pharmacy-automatization/pkg/api/userservice"
+	"github.com/bhankey/pharmacy-automatization-user/internal/entities"
+	"github.com/bhankey/pharmacy-automatization-user/pkg/api/userservice"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 

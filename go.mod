@@ -1,4 +1,4 @@
-module github.com/bhankey/pharmacy-automatization
+module github.com/bhankey/pharmacy-automatization-user
 
 go 1.18
 

@@ -1,5 +1,3 @@
-DROP TABLE IF EXISTS refresh_tokens CASCADE;
-
 DROP TABLE IF EXISTS rights_group CASCADE;
 
 DROP TABLE IF EXISTS users_rights CASCADE;

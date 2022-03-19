@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/bhankey/pharmacy-automatization/internal/entities"
+	"github.com/bhankey/pharmacy-automatization-user/internal/entities"
 )
 
 func (r *Repository) GetBatchOfUsers(ctx context.Context, lastClientID int, limit int) ([]entities.User, error) {

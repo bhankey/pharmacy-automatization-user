@@ -3,7 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
-	"github.com/bhankey/pharmacy-automatization/pkg/api/userservice"
+	"github.com/bhankey/pharmacy-automatization-user/pkg/api/userservice"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"net"
@@ -12,9 +12,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/bhankey/pharmacy-automatization/internal/app/container"
-	configinternal "github.com/bhankey/pharmacy-automatization/internal/config"
-	"github.com/bhankey/pharmacy-automatization/pkg/logger"
+	"github.com/bhankey/pharmacy-automatization-user/internal/app/container"
+	configinternal "github.com/bhankey/pharmacy-automatization-user/internal/config"
+	"github.com/bhankey/pharmacy-automatization-user/pkg/logger"
 )
 
 type App struct {

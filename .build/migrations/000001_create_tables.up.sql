@@ -69,15 +69,3 @@ CREATE TABLE IF NOT EXISTS rights_group (
 CREATE TRIGGER update_rights_group_update_time BEFORE UPDATE
     ON rights_group FOR EACH ROW EXECUTE PROCEDURE
     update_time_column();
-
-CREATE TABLE IF NOT EXISTS refresh_tokens (
-    id bigserial NOT NULL PRIMARY KEY,
-    user_id int REFERENCES users(id),
-    refresh_token text UNIQUE NOT NULL,
-    user_agent text NOT NULL,
-    ip text NOT NULL,
-    finger_print text NOT NULL,
-    is_available bool NOT NULL DEFAULT true,
-    creation_time timestamp NOT NULL DEFAULT NOW()
-)
-

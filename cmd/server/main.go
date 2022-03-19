@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/bhankey/pharmacy-automatization/internal/app"
+	"github.com/bhankey/pharmacy-automatization-user/internal/app"
 	"github.com/joho/godotenv"
 )
 

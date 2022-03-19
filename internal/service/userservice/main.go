@@ -3,7 +3,7 @@ package userservice
 import (
 	"context"
 
-	"github.com/bhankey/pharmacy-automatization/internal/entities"
+	"github.com/bhankey/pharmacy-automatization-user/internal/entities"
 )
 
 type UserService struct {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bhankey/pharmacy-automatization/internal/config"
+	"github.com/bhankey/pharmacy-automatization-user/internal/config"
 	mail "github.com/xhit/go-simple-mail/v2"
 )
 

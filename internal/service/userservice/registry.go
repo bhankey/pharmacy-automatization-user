@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bhankey/pharmacy-automatization/internal/entities"
+	"github.com/bhankey/pharmacy-automatization-user/internal/entities"
 	"golang.org/x/crypto/bcrypt"
 )
 

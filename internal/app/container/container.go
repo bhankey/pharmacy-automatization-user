@@ -1,7 +1,7 @@
 package container
 
 import (
-	"github.com/bhankey/pharmacy-automatization/pkg/logger"
+	"github.com/bhankey/pharmacy-automatization-user/pkg/logger"
 	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 	mail "github.com/xhit/go-simple-mail/v2"
