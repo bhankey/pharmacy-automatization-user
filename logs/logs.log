@@ -1,0 +1,4 @@
+{"level":"info","msg":"try to init data source resource","time":"2022-03-19T21:07:28+03:00"}
+{"level":"info","msg":"staring server on addr: [::]:9005","time":"2022-03-19T21:07:28+03:00"}
+{"level":"info","msg":"received signal to shutdown server","time":"2022-03-19T21:07:30+03:00"}
+{"level":"info","msg":"server was shutdown","time":"2022-03-19T21:07:40+03:00"}

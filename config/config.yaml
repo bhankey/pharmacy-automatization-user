@@ -1,0 +1,26 @@
+server:
+  port: 9005
+  write_timeout: 15
+  read_timeout: 15
+  idle_timeout: 60
+postgres:
+  host: "localhost"
+  port: 5432
+  user: "postgres"
+  password: "postgres"
+  db_name: "postgres"
+redis:
+  host: "localhost"
+  port: 6379
+  password: "redis"
+logger:
+  path: "./logs/logs.log"
+  level: 6
+secure:
+  jwt_key: "someSecureKey"
+smtp:
+  host: "smtp.elasticemail.com"
+  port: 2525
+  user: "pharmmmm@elastic.com"
+  password: "F50CE68B7F1F55605A958DFD27D14784FC77"
+  from: "aa@dotodo.one"

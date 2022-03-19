@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package userService;
+option go_package = "api/userservice";
+
+import "validate/validate.proto";
+// import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message User {
+  int64 id = 1;
+  string name = 2;
+  string email = 3 [(validate.rules).string.email = true];
+  string role = 4 [(validate.rules).string = {in: ["admin", "apothecary"]}];
+  bool use_ip_check = 6;
+  bool is_blocked = 7;
+  int64 default_pharmacy_id = 8;
+  string surname = 9;
+}
+
+message NewUser {
+  string name = 2;
+  string email = 3 [(validate.rules).string.email = true];
+  string role = 4 [(validate.rules).string = {in: ["admin", "apothecary"]}];
+  string password = 5;
+  bool use_ip_check = 6;
+  bool is_blocked = 7;
+  int64 default_pharmacy_id = 8;
+  string surname = 9;
+}
+
+message Email {
+  string email = 1  [(validate.rules).string.email = true];
+}
+
+message GetUserByIDRequest {
+  int64 id = 1 [(validate.rules).int64.gt = 0];
+}
+
+message ChangePasswordRequest {
+  string email = 1  [(validate.rules).string.email = true];
+  string code = 2;
+  string new_password = 3 [(validate.rules).string.min_len = 8];
+}
+
+message PaginationRequest {
+  int64 last_id = 1 [(validate.rules).int64.gte = 0];
+  int64 limit = 2 [(validate.rules).int64.lte = 5000];
+}
+
+message Users {
+  repeated User users = 1;
+}
+
+message UpdateUserRequest {
+
+}
+
+service UserService {
+  rpc GetByEmail(Email) returns (User);
+  rpc GetByID(GetUserByIDRequest) returns (User);
+  rpc CreateUser(NewUser) returns (google.protobuf.Empty);
+  rpc RequestToChangePassword(Email) returns (google.protobuf.Empty);
+  rpc ChangePassword(ChangePasswordRequest) returns (google.protobuf.Empty);
+  rpc GetUsers(PaginationRequest) returns (Users);
+  rpc UpdateUser(User) returns (google.protobuf.Empty);
+}
