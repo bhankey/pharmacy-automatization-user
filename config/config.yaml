@@ -1,5 +1,5 @@
 server:
-  port: 9005
+  port: 8005
   write_timeout: 15
   read_timeout: 15
   idle_timeout: 60

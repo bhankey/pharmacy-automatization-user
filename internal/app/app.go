@@ -3,18 +3,20 @@ package app
 import (
 	"context"
 	"fmt"
-	"github.com/bhankey/pharmacy-automatization-user/pkg/api/userservice"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/bhankey/go-utils/pkg/grpc/interceptors"
+	"github.com/bhankey/go-utils/pkg/logger"
 	"github.com/bhankey/pharmacy-automatization-user/internal/app/container"
 	configinternal "github.com/bhankey/pharmacy-automatization-user/internal/config"
-	"github.com/bhankey/pharmacy-automatization-user/pkg/logger"
+	"github.com/bhankey/pharmacy-automatization-user/pkg/api/userservice"
+	middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 type App struct {
@@ -32,7 +34,7 @@ func NewApp(configPath string) (*App, error) {
 		return nil, fmt.Errorf("failed to init app because of config error: %w", err)
 	}
 
-	log, err := logger.GetLogger(config.Logger.Path, config.Logger.Level, true)
+	log, err := logger.GetLogger(config.Logger.Level)
 	if err != nil {
 		return nil, fmt.Errorf("failed to init logger error: %w", err)
 	}
@@ -54,20 +56,30 @@ func NewApp(configPath string) (*App, error) {
 		dataSources.db,
 		dataSources.redisClient,
 		smtp,
-		config.Secure.JwtKey,
 		config.SMTP.From,
 	)
 
 	grpcHandler := dependencies.GetUserGRPCHandler()
 
-	grpcServer := grpc.NewServer()
+	errorHandlingInterceptor := interceptors.NewErrorHandlingInterceptor(log)
+	panicInterceptor := interceptors.NewPanicInterceptor(log)
+
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(
+			middleware.ChainUnaryServer(
+				errorHandlingInterceptor.ServerInterceptor(),
+				panicInterceptor.ServerInterceptor(),
+			),
+		),
+	)
+
 	reflection.Register(grpcServer)
 
 	userservice.RegisterUserServiceServer(grpcServer, grpcHandler)
 
 	listener, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", config.Server.Port))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("fialed to start listener: %w", err)
 	}
 
 	return &App{
@@ -81,7 +93,6 @@ func NewApp(configPath string) (*App, error) {
 func (a *App) Start() {
 	a.logger.Info("staring server on addr: " + a.listener.Addr().String())
 	go func() {
-
 		if err := a.server.Serve(a.listener); err != nil {
 			a.logger.Fatal(err)
 		}

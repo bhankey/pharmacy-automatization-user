@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+
 	"github.com/bhankey/pharmacy-automatization-user/internal/entities"
 	"github.com/bhankey/pharmacy-automatization-user/pkg/api/userservice"
 )
@@ -9,10 +10,10 @@ import (
 type GRPCHandler struct {
 	userservice.UnimplementedUserServiceServer // Must be
 
-	userSrv UserSrv
+	userSrv Srv
 }
 
-type UserSrv interface {
+type Srv interface {
 	GetByID(ctx context.Context, id int) (entities.User, error)
 	GetByEmail(ctx context.Context, email string) (entities.User, error)
 	UpdateUser(ctx context.Context, user entities.User) error
@@ -23,7 +24,7 @@ type UserSrv interface {
 	IsPasswordCorrect(ctx context.Context, email, password string) (bool, error)
 }
 
-func NewUserGRPCHandler(userSrv UserSrv) *GRPCHandler {
+func NewUserGRPCHandler(userSrv Srv) *GRPCHandler {
 	return &GRPCHandler{
 		UnimplementedUserServiceServer: userservice.UnimplementedUserServiceServer{},
 		userSrv:                        userSrv,
