@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/bhankey/pharmacy-automatization-user/internal/apperror"
+	"github.com/bhankey/go-utils/pkg/apperror"
 	"github.com/go-redis/redis/v8"
 )
 

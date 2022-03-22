@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/bhankey/pharmacy-automatization-user/internal/apperror"
-	"golang.org/x/crypto/bcrypt"
 
+	"github.com/bhankey/go-utils/pkg/apperror"
 	"github.com/bhankey/pharmacy-automatization-user/internal/entities"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (s *UserService) UpdateUser(ctx context.Context, user entities.User) error {
@@ -32,11 +32,25 @@ func (s *UserService) GetBatchOfUsers(ctx context.Context, lastClientID int, lim
 }
 
 func (s *UserService) GetByEmail(ctx context.Context, email string) (entities.User, error) {
-	return s.userStorage.GetUserByEmail(ctx, email)
+	errBase := fmt.Sprintf("userservice.GetByEmail(%s)", email)
+
+	user, err := s.userStorage.GetUserByEmail(ctx, email)
+	if err != nil {
+		return entities.User{}, fmt.Errorf("%s: Failed to get user by email : %w", errBase, err)
+	}
+
+	return user, nil
 }
 
 func (s *UserService) GetByID(ctx context.Context, id int) (entities.User, error) {
-	return s.userStorage.GetUserByID(ctx, id)
+	errBase := fmt.Sprintf("userservice.GetByID(%d)", id)
+
+	user, err := s.userStorage.GetUserByID(ctx, id)
+	if err != nil {
+		return entities.User{}, fmt.Errorf("%s: Failed to get user by id : %w", errBase, err)
+	}
+
+	return user, nil
 }
 
 func (s *UserService) IsPasswordCorrect(ctx context.Context, email, password string) (bool, error) {

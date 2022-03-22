@@ -1,7 +1,7 @@
 package container
 
 import (
-	"github.com/bhankey/pharmacy-automatization-user/pkg/logger"
+	"github.com/bhankey/go-utils/pkg/logger"
 	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 	mail "github.com/xhit/go-simple-mail/v2"
@@ -14,7 +14,6 @@ type Container struct {
 	smtpClient       *mail.SMTPClient
 	logger           logger.Logger
 
-	jwtKey          string
 	smtpMessageFrom string
 
 	dependencies map[string]interface{}
@@ -25,7 +24,6 @@ func NewContainer(
 	masterPostgres, slavePostgres *sqlx.DB,
 	redis *redis.Client,
 	smtpClient *mail.SMTPClient,
-	jwtKey,
 	smtpMessageFrom string,
 ) *Container {
 	return &Container{
@@ -34,7 +32,6 @@ func NewContainer(
 		redisConnection:  redis,
 		smtpClient:       smtpClient,
 		logger:           log,
-		jwtKey:           jwtKey,
 		smtpMessageFrom:  smtpMessageFrom,
 		dependencies:     make(map[string]interface{}),
 	}
